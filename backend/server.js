@@ -38,6 +38,15 @@ const writeDB = (data) => {
   }
 };
 
+// API: Root Status Info
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    message: 'AI Bill Guardian REST API is fully operational.',
+    version: '1.0.0'
+  });
+});
+
 // API: Get user profile
 app.get('/api/profile', (req, res) => {
   const db = readDB();
