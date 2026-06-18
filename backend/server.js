@@ -25,7 +25,7 @@ const readDB = () => {
     return JSON.parse(data);
   } catch (error) {
     console.error('Error reading database file:', error);
-    return { profile: {}, bills: [], recommendations: [], alerts: [], tickets: [] };
+    return { profile: {}, bills: [], recommendations: [], alerts: [], tickets: [], users: [] };
   }
 };
 
@@ -64,6 +64,7 @@ app.post('/api/auth/signup', (req, res) => {
   const newUser = { id: `user-${Date.now()}`, name, email, password };
   db.users.push(newUser);
   
+  // Set active user session
   db.profile = {
     name,
     email,
@@ -71,6 +72,56 @@ app.post('/api/auth/signup', (req, res) => {
     phone: '',
     language: 'en'
   };
+
+  // Seed default recommendations for this new user
+  const defaults = [
+    {
+      id: `rec-${Date.now()}-1`,
+      userEmail: email,
+      title: "Optimize AC Settings",
+      description: "Increase AC temperature to 24°C instead of 20°C to reduce electricity consumption by up to 15%.",
+      category: "electricity",
+      estSavings: 250,
+      difficulty: "Easy",
+      impact: "High",
+      applied: false
+    },
+    {
+      id: `rec-${Date.now()}-2`,
+      userEmail: email,
+      title: "Audit Water Fixtures for Leaks",
+      description: "A slow drip can waste over 100 liters of water a day. Fix any leaks in your toilets or taps to reduce your water bill.",
+      category: "water",
+      estSavings: 180,
+      difficulty: "Medium",
+      impact: "Medium",
+      applied: false
+    },
+    {
+      id: `rec-${Date.now()}-3`,
+      userEmail: email,
+      title: "Downgrade FiberNet Broadband Plan",
+      description: "You are currently paying for 200 Mbps fiber speed but your peak average usage does not exceed 45 Mbps. Switch to the 100 Mbps plan.",
+      category: "broadband",
+      estSavings: 200,
+      difficulty: "Easy",
+      impact: "Medium",
+      applied: false
+    },
+    {
+      id: `rec-${Date.now()}-4`,
+      userEmail: email,
+      title: "Switch to Annual Telecom Plan",
+      description: "Prepaying for the annual telecom plan drops your average monthly charge from ₹799 to ₹499/month.",
+      category: "mobile",
+      estSavings: 300,
+      difficulty: "Medium",
+      impact: "High",
+      applied: false
+    }
+  ];
+  db.recommendations = db.recommendations || [];
+  db.recommendations.push(...defaults);
   
   writeDB(db);
   res.status(201).json(db.profile);
@@ -116,19 +167,23 @@ app.put('/api/profile', (req, res) => {
   res.json(db.profile);
 });
 
-// API: Get all bills
+// API: Get current user's bills only
 app.get('/api/bills', (req, res) => {
   const db = readDB();
+  const email = db.profile ? db.profile.email : '';
+  const userBills = db.bills.filter(b => b.userEmail === email);
   // Sort bills descending by billingDate
-  const sortedBills = [...db.bills].sort((a, b) => new Date(b.billingDate) - new Date(a.billingDate));
+  const sortedBills = [...userBills].sort((a, b) => new Date(b.billingDate) - new Date(a.billingDate));
   res.json(sortedBills);
 });
 
-// API: Add new bill manually
+// API: Add new bill under current user session
 app.post('/api/bills', (req, res) => {
   const db = readDB();
+  const email = db.profile ? db.profile.email : '';
   const newBill = {
     id: `bill-${Date.now()}`,
+    userEmail: email,
     ...req.body,
   };
   db.bills.push(newBill);
@@ -161,7 +216,6 @@ app.put('/api/bills/:id', (req, res) => {
 app.delete('/api/bills/:id', (req, res) => {
   const db = readDB();
   db.bills = db.bills.filter(b => b.id !== req.params.id);
-  // Also clean up alerts associated with this bill
   db.alerts = db.alerts.filter(a => a.billId !== req.params.id);
   writeDB(db);
   res.json({ message: 'Bill deleted successfully' });
@@ -169,7 +223,8 @@ app.delete('/api/bills/:id', (req, res) => {
 
 // API: Mock OCR Upload
 app.post('/api/bills/upload', upload.single('billFile'), (req, res) => {
-  // Extract info based on file name/metadata or simulate a random bill
+  const db = readDB();
+  const email = db.profile ? db.profile.email : '';
   const originalName = req.file ? req.file.originalname.toLowerCase() : 'bill.pdf';
   
   let type = 'electricity';
@@ -204,13 +259,12 @@ app.post('/api/bills/upload', upload.single('billFile'), (req, res) => {
   } else if (originalName.includes('gas')) {
     type = 'gas';
     provider = 'Indane Gas';
-    units = 2; // Cylinders or units
+    units = 2;
     tariffRate = 950;
     tax = 50;
     amount = 1000;
   }
 
-  // Generate dynamic dates (usually due date is ~20 days from billing date)
   const billingDate = new Date().toISOString().split('T')[0];
   const dueDateObj = new Date();
   dueDateObj.setDate(dueDateObj.getDate() + 20);
@@ -218,6 +272,7 @@ app.post('/api/bills/upload', upload.single('billFile'), (req, res) => {
 
   const extractedData = {
     id: `bill-extracted-${Date.now()}`,
+    userEmail: email,
     type,
     amount,
     billingDate,
@@ -231,17 +286,18 @@ app.post('/api/bills/upload', upload.single('billFile'), (req, res) => {
     fileName: req.file ? req.file.originalname : 'Uploaded_Bill.pdf'
   };
 
-  // Do not write to DB yet; user must verify and hit "Save" on OCR details page!
   res.json({
     message: 'OCR Extraction complete',
     data: extractedData
   });
 });
 
-// API: Get savings recommendations
+// API: Get current user's savings recommendations only
 app.get('/api/recommendations', (req, res) => {
   const db = readDB();
-  res.json(db.recommendations);
+  const email = db.profile ? db.profile.email : '';
+  const userRecs = db.recommendations.filter(r => r.userEmail === email);
+  res.json(userRecs);
 });
 
 // API: Toggle/apply recommendation
@@ -257,10 +313,12 @@ app.put('/api/recommendations/:id', (req, res) => {
   res.json(db.recommendations[index]);
 });
 
-// API: Get active alerts
+// API: Get current user's alerts
 app.get('/api/alerts', (req, res) => {
   const db = readDB();
-  res.json(db.alerts.filter(a => !a.resolved));
+  const email = db.profile ? db.profile.email : '';
+  const userAlerts = db.alerts.filter(a => a.userEmail === email && !a.resolved);
+  res.json(userAlerts);
 });
 
 // API: Resolve/dismiss alert
@@ -278,14 +336,14 @@ app.put('/api/alerts/:id', (req, res) => {
 // API: Generate predictions / forecasts
 app.get('/api/predictions', (req, res) => {
   const db = readDB();
-  const bills = db.bills;
+  const email = db.profile ? db.profile.email : '';
+  const userBills = db.bills.filter(b => b.userEmail === email);
   
-  // Group bills by type and predict next 1, 3, 6 months
   const types = ['electricity', 'water', 'broadband', 'mobile', 'gas'];
   const forecasts = {};
 
   types.forEach(type => {
-    const typeBills = bills.filter(b => b.type === type).sort((a, b) => new Date(a.billingDate) - new Date(b.billingDate));
+    const typeBills = userBills.filter(b => b.type === type).sort((a, b) => new Date(a.billingDate) - new Date(b.billingDate));
     
     if (typeBills.length === 0) {
       forecasts[type] = { m1: 0, m3: 0, m6: 0, historicalAverage: 0, data: [] };
@@ -295,8 +353,6 @@ app.get('/api/predictions', (req, res) => {
     const amounts = typeBills.map(b => b.amount);
     const avg = amounts.reduce((a, b) => a + b, 0) / amounts.length;
     
-    // Quick seasonal calculation
-    // If trend is rising (like electricity in summer), project the rise
     let slope = 0;
     if (typeBills.length >= 2) {
       const first = typeBills[0].amount;
@@ -304,7 +360,6 @@ app.get('/api/predictions', (req, res) => {
       slope = (last - first) / (typeBills.length - 1);
     }
     
-    // Limit slope to avoid runaway predictions
     const maxSlope = avg * 0.15;
     const minSlope = -avg * 0.15;
     slope = Math.max(minSlope, Math.min(maxSlope, slope));
@@ -331,11 +386,10 @@ app.get('/api/admin/stats', (req, res) => {
   const bills = db.bills;
   
   const totalBillsAnalyzed = bills.length;
-  const totalUsers = 1248; // Simulated static count
-  const revenueUSD = 345000; // Simulated monthly revenue in INR/USD equivalent
+  const totalUsers = db.users ? db.users.length + 1248 : 1248;
+  const revenueUSD = 345000;
   
-  // Calculate average confidence score and AI usage
-  const aiTokensUsed = bills.length * 12500 + 450000; // Formula
+  const aiTokensUsed = bills.length * 12500 + 450000;
   const activeAlerts = db.alerts.filter(a => !a.resolved).length;
   
   res.json({
@@ -367,9 +421,8 @@ app.post('/api/admin/tickets', (req, res) => {
 
 // Helper function to check anomalies when a bill is added/updated
 function checkAnomaliesForBill(db, bill) {
-  // Find past bills of this type
   const pastBills = db.bills
-    .filter(b => b.type === bill.type && b.id !== bill.id)
+    .filter(b => b.type === bill.type && b.id !== bill.id && b.userEmail === bill.userEmail)
     .sort((a, b) => new Date(b.billingDate) - new Date(a.billingDate));
     
   if (pastBills.length === 0) return;
@@ -380,10 +433,10 @@ function checkAnomaliesForBill(db, bill) {
   // 1. Check for Sudden Spike (e.g. > 40% increase)
   if (percentChange > 40) {
     const alertId = `alert-spike-${bill.id}`;
-    // Remove duplicate alert if exists
     db.alerts = db.alerts.filter(a => a.id !== alertId);
     db.alerts.unshift({
       id: alertId,
+      userEmail: bill.userEmail,
       type: 'anomaly',
       level: percentChange > 80 ? 'High' : 'Medium',
       title: `${bill.type.charAt(0).toUpperCase() + bill.type.slice(1)} Spike Detected`,
@@ -401,6 +454,7 @@ function checkAnomaliesForBill(db, bill) {
       db.alerts = db.alerts.filter(a => a.id !== alertId);
       db.alerts.unshift({
         id: alertId,
+        userEmail: bill.userEmail,
         type: 'anomaly',
         level: 'Low',
         title: 'Possible Subscription Creep',

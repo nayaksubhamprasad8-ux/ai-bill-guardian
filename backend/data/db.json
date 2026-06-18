@@ -16,6 +16,7 @@
   "bills": [
     {
       "id": "bill-elec-05",
+      "userEmail": "subham.sharma@example.com",
       "type": "electricity",
       "amount": 6700,
       "billingDate": "2026-05-15",
@@ -29,6 +30,7 @@
     },
     {
       "id": "bill-elec-04",
+      "userEmail": "subham.sharma@example.com",
       "type": "electricity",
       "amount": 5800,
       "billingDate": "2026-04-15",
@@ -42,12 +44,13 @@
     },
     {
       "id": "bill-elec-03",
+      "userEmail": "subham.sharma@example.com",
       "type": "electricity",
       "amount": 4500,
       "billingDate": "2026-03-15",
       "dueDate": "2026-04-05",
       "units": 450,
-      "tariffRate": 8,
+      "tariffRate": 8.0,
       "tax": 900,
       "status": "paid",
       "provider": "State Electricity Board",
@@ -55,12 +58,13 @@
     },
     {
       "id": "bill-elec-02",
+      "userEmail": "subham.sharma@example.com",
       "type": "electricity",
       "amount": 3400,
       "billingDate": "2026-02-15",
       "dueDate": "2026-03-05",
       "units": 340,
-      "tariffRate": 8,
+      "tariffRate": 8.0,
       "tax": 680,
       "status": "paid",
       "provider": "State Electricity Board",
@@ -68,12 +72,13 @@
     },
     {
       "id": "bill-elec-01",
+      "userEmail": "subham.sharma@example.com",
       "type": "electricity",
       "amount": 3100,
       "billingDate": "2026-01-15",
       "dueDate": "2026-02-05",
       "units": 310,
-      "tariffRate": 8,
+      "tariffRate": 8.0,
       "tax": 620,
       "status": "paid",
       "provider": "State Electricity Board",
@@ -81,6 +86,7 @@
     },
     {
       "id": "bill-water-05",
+      "userEmail": "subham.sharma@example.com",
       "type": "water",
       "amount": 1100,
       "billingDate": "2026-05-18",
@@ -94,6 +100,7 @@
     },
     {
       "id": "bill-water-04",
+      "userEmail": "subham.sharma@example.com",
       "type": "water",
       "amount": 950,
       "billingDate": "2026-04-18",
@@ -107,6 +114,7 @@
     },
     {
       "id": "bill-water-03",
+      "userEmail": "subham.sharma@example.com",
       "type": "water",
       "amount": 750,
       "billingDate": "2026-03-18",
@@ -120,6 +128,7 @@
     },
     {
       "id": "bill-water-02",
+      "userEmail": "subham.sharma@example.com",
       "type": "water",
       "amount": 620,
       "billingDate": "2026-02-18",
@@ -133,6 +142,7 @@
     },
     {
       "id": "bill-water-01",
+      "userEmail": "subham.sharma@example.com",
       "type": "water",
       "amount": 600,
       "billingDate": "2026-01-18",
@@ -146,6 +156,7 @@
     },
     {
       "id": "bill-broadband-05",
+      "userEmail": "subham.sharma@example.com",
       "type": "broadband",
       "amount": 1199,
       "billingDate": "2026-05-20",
@@ -159,6 +170,7 @@
     },
     {
       "id": "bill-broadband-04",
+      "userEmail": "subham.sharma@example.com",
       "type": "broadband",
       "amount": 1199,
       "billingDate": "2026-04-20",
@@ -172,6 +184,7 @@
     },
     {
       "id": "bill-broadband-03",
+      "userEmail": "subham.sharma@example.com",
       "type": "broadband",
       "amount": 1199,
       "billingDate": "2026-03-20",
@@ -185,6 +198,7 @@
     },
     {
       "id": "bill-broadband-02",
+      "userEmail": "subham.sharma@example.com",
       "type": "broadband",
       "amount": 999,
       "billingDate": "2026-02-20",
@@ -198,6 +212,7 @@
     },
     {
       "id": "bill-broadband-01",
+      "userEmail": "subham.sharma@example.com",
       "type": "broadband",
       "amount": 999,
       "billingDate": "2026-01-20",
@@ -211,6 +226,7 @@
     },
     {
       "id": "bill-mobile-05",
+      "userEmail": "subham.sharma@example.com",
       "type": "mobile",
       "amount": 799,
       "billingDate": "2026-05-22",
@@ -224,6 +240,7 @@
     },
     {
       "id": "bill-mobile-04",
+      "userEmail": "subham.sharma@example.com",
       "type": "mobile",
       "amount": 799,
       "billingDate": "2026-04-22",
@@ -237,6 +254,7 @@
     },
     {
       "id": "bill-mobile-03",
+      "userEmail": "subham.sharma@example.com",
       "type": "mobile",
       "amount": 899,
       "billingDate": "2026-03-22",
@@ -250,6 +268,7 @@
     },
     {
       "id": "bill-mobile-02",
+      "userEmail": "subham.sharma@example.com",
       "type": "mobile",
       "amount": 799,
       "billingDate": "2026-02-22",
@@ -263,6 +282,7 @@
     },
     {
       "id": "bill-mobile-01",
+      "userEmail": "subham.sharma@example.com",
       "type": "mobile",
       "amount": 799,
       "billingDate": "2026-01-22",
@@ -278,6 +298,7 @@
   "recommendations": [
     {
       "id": "rec-01",
+      "userEmail": "subham.sharma@example.com",
       "title": "Optimize AC Settings",
       "description": "Increase AC temperature to 24°C instead of 20°C to reduce electricity consumption by up to 15%.",
       "category": "electricity",
@@ -288,6 +309,7 @@
     },
     {
       "id": "rec-02",
+      "userEmail": "subham.sharma@example.com",
       "title": "Audit Water Fixtures for Leaks",
       "description": "A slow drip can waste over 100 liters of water a day. Fix any leaks in your toilets or taps to reduce your water bill.",
       "category": "water",
@@ -298,6 +320,7 @@
     },
     {
       "id": "rec-03",
+      "userEmail": "subham.sharma@example.com",
       "title": "Downgrade FiberNet Broadband Plan",
       "description": "You are currently paying for 200 Mbps fiber speed but your peak average usage does not exceed 45 Mbps. Switch to the 100 Mbps plan.",
       "category": "broadband",
@@ -308,6 +331,7 @@
     },
     {
       "id": "rec-04",
+      "userEmail": "subham.sharma@example.com",
       "title": "Switch to Annual Telecom Plan",
       "description": "Prepaying for the annual telecom plan drops your average monthly charge from ₹799 to ₹499/month.",
       "category": "mobile",
@@ -320,6 +344,7 @@
   "alerts": [
     {
       "id": "alert-01",
+      "userEmail": "subham.sharma@example.com",
       "type": "anomaly",
       "level": "High",
       "title": "Electricity Consumption Spike",
@@ -330,6 +355,7 @@
     },
     {
       "id": "alert-02",
+      "userEmail": "subham.sharma@example.com",
       "type": "anomaly",
       "level": "Medium",
       "title": "Suspected Water Pipe Leak",
@@ -340,6 +366,7 @@
     },
     {
       "id": "alert-03",
+      "userEmail": "subham.sharma@example.com",
       "type": "due_date",
       "level": "Low",
       "title": "Electricity Bill Due in 3 days",

@@ -243,8 +243,45 @@ export const Dashboard: React.FC = () => {
         {/* Left Column (Span 2) */}
         <div className="lg:col-span-2 space-y-6">
           
-          {/* Spend Trend Charts */}
-          <div className="glass-panel p-5 rounded-2xl h-[330px] flex flex-col justify-between">
+          {bills.length === 0 ? (
+            <div className="glass-panel p-8 rounded-3xl border border-white/10 text-center space-y-6 py-16">
+              <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto text-primary-light animate-bounce">
+                <Sparkles className="w-8 h-8" />
+              </div>
+              
+              <div className="space-y-2 max-w-md mx-auto">
+                <h3 className="font-display font-extrabold text-lg text-white">Your Workspace is Ready!</h3>
+                <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                  You've successfully signed up. Currently, there are no utility bills in your account. Upload an electricity, water, gas, broadband, or mobile bill to begin.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('upload')}
+                className="mx-auto flex items-center gap-2 bg-gradient-to-r from-primary to-secondary hover:from-primary-light hover:to-secondary-light text-white text-xs font-bold rounded-xl px-6 py-3.5 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <FileText className="w-4 h-4" /> Upload Your First Bill
+              </button>
+
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/5 text-left text-slate-500">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">1. Scan & Parse</span>
+                  <p className="text-[9px] leading-normal font-sans">AI extracts items, rates, taxes, and due dates via OCR.</p>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">2. Explain Hikes</span>
+                  <p className="text-[9px] leading-normal font-sans">Compare against cycle baselines to explain cost spikes.</p>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">3. Predict & Save</span>
+                  <p className="text-[9px] leading-normal font-sans">Forecast future costs and apply personalized savings tips.</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Spend Trend Charts */}
+              <div className="glass-panel p-5 rounded-2xl h-[330px] flex flex-col justify-between">
             <div className="flex justify-between items-center mb-4">
               <div>
                 <h4 className="font-display font-bold text-xs text-white">Utility Spend History & Future Predictions</h4>
@@ -445,11 +482,12 @@ export const Dashboard: React.FC = () => {
                 <div className="pt-2 border-t border-white/5 text-[9px] text-danger font-semibold">
                   ⚠️ You spend <span className="font-bold text-danger">57% more</span> than peers (leak alert indicator).
                 </div>
-              </div>
             </div>
           </div>
-
         </div>
+      </>
+      )}
+    </div>
 
         {/* Right Sidebar Column */}
         <div className="space-y-6">
