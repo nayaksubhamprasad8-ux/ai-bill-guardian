@@ -47,6 +47,61 @@ app.get('/', (req, res) => {
   });
 });
 
+// API: Auth Signup
+app.post('/api/auth/signup', (req, res) => {
+  const db = readDB();
+  const { name, email, password } = req.body;
+  
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Please enter all fields' });
+  }
+  
+  db.users = db.users || [];
+  if (db.users.find(u => u.email === email)) {
+    return res.status(400).json({ error: 'Email already registered' });
+  }
+  
+  const newUser = { id: `user-${Date.now()}`, name, email, password };
+  db.users.push(newUser);
+  
+  db.profile = {
+    name,
+    email,
+    currency: '₹',
+    phone: '',
+    language: 'en'
+  };
+  
+  writeDB(db);
+  res.status(201).json(db.profile);
+});
+
+// API: Auth Login
+app.post('/api/auth/login', (req, res) => {
+  const db = readDB();
+  const { email, password } = req.body;
+  
+  db.users = db.users || [
+    { email: 'subham.sharma@example.com', password: 'password123', name: 'Subham Sharma' }
+  ];
+  
+  const user = db.users.find(u => u.email === email && u.password === password);
+  if (!user) {
+    return res.status(400).json({ error: 'Invalid email or password' });
+  }
+  
+  db.profile = {
+    name: user.name,
+    email: user.email,
+    currency: '₹',
+    phone: db.profile.phone || '',
+    language: db.profile.language || 'en'
+  };
+  
+  writeDB(db);
+  res.json(db.profile);
+});
+
 // API: Get user profile
 app.get('/api/profile', (req, res) => {
   const db = readDB();

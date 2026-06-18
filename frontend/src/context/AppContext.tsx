@@ -320,6 +320,8 @@ interface AppContextType {
   toggleRecommendation: (id: string) => Promise<void>;
   resolveAlert: (id: string) => Promise<void>;
   updateProfile: (profileData: Partial<Profile>) => Promise<void>;
+  loginUser: (email: string, password: string) => Promise<void>;
+  signupUser: (name: string, email: string, password: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -445,6 +447,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setProfile(updatedProf);
   };
 
+  const loginUser = async (email: string, password: string) => {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Login failed');
+    }
+    const profileData = await res.json();
+    setProfile(profileData);
+    setAuthStatus('authenticated');
+    await fetchData();
+  };
+
+  const signupUser = async (name: string, email: string, password: string) => {
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Signup failed');
+    }
+    const profileData = await res.json();
+    setProfile(profileData);
+    setAuthStatus('authenticated');
+    await fetchData();
+  };
+
   return (
     <AppContext.Provider value={{
       language,
@@ -469,6 +503,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       toggleRecommendation,
       resolveAlert,
       updateProfile,
+      loginUser,
+      signupUser,
     }}>
       {children}
     </AppContext.Provider>

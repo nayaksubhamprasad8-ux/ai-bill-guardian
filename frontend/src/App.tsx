@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { LandingPage } from './pages/LandingPage';
+import { AuthPage } from './pages/AuthPage';
 import { Dashboard } from './pages/Dashboard';
 import { UploadPage } from './pages/UploadPage';
 import { OcrPage } from './pages/OcrPage';
@@ -223,9 +224,13 @@ const DashboardLayout: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const { authStatus } = useApp();
+  const [guestView, setGuestView] = useState<'landing' | 'auth'>('landing');
   
   if (authStatus === 'guest') {
-    return <LandingPage />;
+    if (guestView === 'auth') {
+      return <AuthPage onBack={() => setGuestView('landing')} />;
+    }
+    return <LandingPage onStartAuth={() => setGuestView('auth')} />;
   }
 
   return <DashboardLayout />;

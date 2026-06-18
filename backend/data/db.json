@@ -1,4 +1,11 @@
 {
+  "users": [
+    {
+      "email": "subham.sharma@example.com",
+      "password": "password123",
+      "name": "Subham Sharma"
+    }
+  ],
   "profile": {
     "name": "Subham Sharma",
     "email": "subham.sharma@example.com",

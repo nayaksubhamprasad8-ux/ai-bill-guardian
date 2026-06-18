@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { Sparkles, FileText, ArrowRight, ShieldCheck, Cpu, HelpCircle, BarChart3, Globe, Mic, MessageSquare, AlertTriangle, Play, HelpCircle as HelpIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
-export const LandingPage: React.FC = () => {
+interface LandingPageProps {
+  onStartAuth: () => void;
+}
+
+export const LandingPage: React.FC<LandingPageProps> = ({ onStartAuth }) => {
   const { translate, setAuthStatus, setActiveTab } = useApp();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const startApp = () => {
-    setAuthStatus('authenticated');
-    setActiveTab('dashboard');
+    onStartAuth();
   };
 
   const faqData = [
